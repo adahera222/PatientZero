@@ -3,13 +3,6 @@ using System.Collections;
 
 public class GoalArea : MonoBehaviour {
 	
-	private ParticleSystem particleSystem;
-	
-	void Awake()
-	{
-		particleSystem = GetComponent<ParticleSystem>();
-	}
-
 	void OnTriggerEnter(Collider collider)
 	{
 		if(particleSystem != null)
