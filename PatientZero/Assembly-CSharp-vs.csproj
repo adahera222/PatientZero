@@ -46,6 +46,8 @@
   <ItemGroup>
      <Compile Include="Assets\GoalArea.cs" />
      <Compile Include="Assets\Player.cs" />
+     <Compile Include="Assets\RotateAroundScript.cs" />
+     <Compile Include="Assets\Scripts\Utility\ShowFramesPerSecond.cs" />
      <Compile Include="Assets\ZoomableCamera.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

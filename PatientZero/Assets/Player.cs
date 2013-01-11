@@ -17,6 +17,8 @@ public class Player : MonoBehaviour {
 	
 	private Timer delayGravity;
 	CharacterController controller;
+	public GameObject BrokenUpPrefab;
+	private GameObject brokenUpPrefab;
 	
 	void Awake()
 	{
@@ -31,10 +33,39 @@ public class Player : MonoBehaviour {
     void Update()
 	{
 		HandleBasicMovement();
-
+		StartCoroutine(ShowLine());
+		
+		if(Input.GetMouseButtonUp(0) && Input.GetKey(KeyCode.LeftShift))
+		{
+			Vector3 end = Camera.mainCamera.ScreenToWorldPoint(Input.mousePosition);
+			transform.position = new Vector3(end.x,end.y,0);
+			delayGravity.Enabled = true;
+			gameObject.renderer.enabled = true;
+			Gravity = 0;
+		}
+		else if(Input.GetKey(KeyCode.LeftShift))
+		{
+			gameObject.renderer.enabled = false;
+			if(brokenUpPrefab == null)
+				brokenUpPrefab = (GameObject)Instantiate(BrokenUpPrefab,gameObject.transform.position,gameObject.transform.rotation);
+			brokenUpPrefab.transform.parent = gameObject.transform;
+		}
+		else
+		{
+			gameObject.renderer.enabled = true;
+			if(brokenUpPrefab)
+				Destroy(brokenUpPrefab);
+		}
+		
+    	// Keep player at 0 on the Z axis at all times (can't fall forward or back. Implement your own constraints here)
+    	// character controller + rigid body is a little finicky sometimes, hence this
+    	transform.position = new Vector3(transform.position.x,transform.position.y,0);
+    }
+	
+	IEnumerator ShowLine()
+	{
 		if(Input.GetMouseButton(0))
 		{
-        	Debug.Log("Pressed left pressed.");		
 			if(line != null)
 			{
 				line.SetPosition(0,transform.position);
@@ -46,19 +77,8 @@ public class Player : MonoBehaviour {
 			line.SetPosition(0,Vector3.zero);
 			line.SetPosition(1,Vector3.zero);
 		}
-		if(Input.GetMouseButtonUp(0) && Input.GetKey(KeyCode.LeftShift))
-		{
-			CharacterController controller = GetComponent<CharacterController>();
-			Vector3 end = Camera.mainCamera.ScreenToWorldPoint(Input.mousePosition);
-			transform.position = new Vector3(end.x,end.y,0);
-			delayGravity.Enabled = true;
-			Gravity = 0;
-		}
-    	
-    	// Keep player at 0 on the Z axis at all times (can't fall forward or back. Implement your own constraints here)
-    	// character controller + rigid body is a little finicky sometimes, hence this
-    	transform.position = new Vector3(transform.position.x,transform.position.y,0);
-    }
+		yield return null;
+	}
 	
 	void GravityDelay(object source, ElapsedEventArgs e)
 	{
